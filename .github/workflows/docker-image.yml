@@ -58,8 +58,9 @@ jobs:
 
       - name: Update image tag in values.yaml
         run: |
-          ls -la
-          ls -la helm-chart
+          ls -la 
+          ls -la helm-chart/helm-chart
+          ls -la helm-chart/directory
           cd helm-chart
           sed -i "s/tag: .*/tag: ${{ env.NEW_TAG }}/" values.yaml
 
