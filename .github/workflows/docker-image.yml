@@ -31,7 +31,6 @@ jobs:
           # Получаем список тегов с Docker Hub (макс. 100)
           TAGS=$(curl -s "https://hub.docker.com/v2/repositories/$USER/$REPO/tags/?page_size=100" | jq -r '.results[].name' | grep '^v[0-9]\+' || echo "v0")
 
-          # Находим максимальный номер
           LAST_TAG=$(echo "$TAGS" | sed 's/v//' | sort -nr | head -n1)
           NEXT_VERSION=$((LAST_TAG + 1))
           echo "next_version=v$NEXT_VERSION" >> $GITHUB_OUTPUT
@@ -41,5 +40,7 @@ jobs:
         with:
           context: ./jsonplaceholder
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/jsonplaceholder:${{ steps.get_version.outputs.next_version }}
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/jsonplaceholder:${{ steps.get_version.outputs.next_version }}
+            ${{ secrets.DOCKER_USERNAME }}/jsonplaceholder:latest
 
