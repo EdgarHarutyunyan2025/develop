@@ -61,6 +61,7 @@ jobs:
           ls -la 
           ls -la helm-chart/helm-chart
           cd helm-chart/helm-chart
+          cat values.yaml
           sed -i "s/tag: .*/tag: ${{ env.NEW_TAG }}/" values.yaml
 
       - name: Commit and push changes
