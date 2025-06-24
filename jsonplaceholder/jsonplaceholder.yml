@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jsonplaceholder
+spec:
+  selector:
+    matchLabels:
+      app: jsonplaceholder
+  template:
+    metadata:
+      labels:
+        app: jsonplaceholder
+    spec:
+      containers:
+        - name  : jsonplaceholder
+          image : edo1997edo/jsonplaceholder:v3
+          resources:
+            limits:
+              memory : "128Mi"
+              cpu    : "250m"
+          ports:
+            - containerPort: 3000
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jsonplaceholder
+spec:
+  type: LoadBalancer
+  selector:
+    app: jsonplaceholder
+  ports:
+    - port      : 7777
+      targetPort: 3000
