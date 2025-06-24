@@ -22,10 +22,24 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Get latest Docker image version
+        id: get_version
+        run: |
+          USER=${{ secrets.DOCKER_USERNAME }}
+          REPO=jsonplaceholder
+
+          # Получаем список тегов с Docker Hub (макс. 100)
+          TAGS=$(curl -s "https://hub.docker.com/v2/repositories/$USER/$REPO/tags/?page_size=100" | jq -r '.results[].name' | grep '^v[0-9]\+' || echo "v0")
+
+          # Находим максимальный номер
+          LAST_TAG=$(echo "$TAGS" | sed 's/v//' | sort -nr | head -n1)
+          NEXT_VERSION=$((LAST_TAG + 1))
+          echo "next_version=v$NEXT_VERSION" >> $GITHUB_OUTPUT
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: ./jsonplaceholder
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/jsonplaceholder:v8
+          tags: ${{ secrets.DOCKER_USERNAME }}/jsonplaceholder:${{ steps.get_version.outputs.next_version }}
 
