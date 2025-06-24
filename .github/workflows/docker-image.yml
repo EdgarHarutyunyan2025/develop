@@ -33,7 +33,9 @@ jobs:
 
           LAST_TAG=$(echo "$TAGS" | sed 's/v//' | sort -nr | head -n1)
           NEXT_VERSION=$((LAST_TAG + 1))
+          FULL_TAG="${USER}/${REPO}:v${NEXT_VERSION}"
           echo "next_version=v$NEXT_VERSION" >> $GITHUB_OUTPUT
+          echo "next_version=v${NEXT_VERSION}" >> $GITHUB_OUTPUT
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
@@ -58,7 +60,7 @@ jobs:
 
       - name: Update image tag in values.yaml
         run: |
-          sed -i "s|\(container:\s*image:\s*.*:\).*|\1${{ env.NEW_TAG }}|" helm-chart/helm-chart/values.yaml
+          sed -i "s|\(container:\s*image:\s*\).*|\1${{ steps.get_version.outputs.full_tag }}|" helm-chart/helm-chart/values.yaml
 
       - name: Commit and push changes
         run: |
