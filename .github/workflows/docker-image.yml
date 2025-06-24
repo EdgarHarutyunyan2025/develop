@@ -25,7 +25,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./jsonplaceholder
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/jsonplaceholder:8
+          tags: ${{ secrets.DOCKER_USERNAME }}/jsonplaceholder:v8
 
